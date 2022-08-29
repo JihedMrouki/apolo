@@ -29,7 +29,7 @@ const resolvers = {
       return Order.findById(id);
     },
     orderItems: async (_root, { id }, _context, _info) => {
-      return OrderItems.find({ orderId: id }).populate("meal");
+      return OrderItems.find({ orderId: id }).populate("meal").populate("order");
     },
   },
   Mutation: {
@@ -47,7 +47,8 @@ const resolvers = {
     // Order
 
     createOrder: async (parent, args, _context, _info) => {
-      const order = new Order();
+      const {state} = args.input;
+      const order = new Order({state});
       await order.save();
       return order;
     },
@@ -66,7 +67,9 @@ const resolvers = {
       });
       orderItem.save();
       
-      return orderItem.populate("meal");
+      //return orderItem.populate("meal").populate("order").exec();
+      const item = await OrderItems.findById(orderItem._id).populate("meal").populate("order").exec();
+      return item;
     },
     deleteOrderItem: async (parent, { id }, _context, _info) => {
       console.log(id);

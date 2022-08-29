@@ -14,8 +14,8 @@ const typeDefs = gql`
     orders: [Order]!
     order(id: ID!): Order!
     orderItems(orderId: ID!): [OrderItem]!
+    UserOrder(state: OrderState): [Order]!
     
-
   }
   
   
@@ -26,14 +26,16 @@ const typeDefs = gql`
     deleteMeal(id: ID!): String
 
 
-    createOrder: Order
+    createOrder(input: createOrderInput): Order
     deleteOrder(id: ID!): String
     addOrderItem(item: CreateOrderItemInput): OrderItem
     deleteOrderItem(id: ID!): String
   }
 
 
-  
+  input createOrderInput{
+    state: OrderState
+  }
 
   input CreateMealInput{
     title: String!
@@ -63,11 +65,20 @@ const typeDefs = gql`
     Plats
     Entree
     Desserts
+    Boissons
+  }
+
+  enum OrderState{
+    Created
+    Pending
+    Canceled
+    Success
   }
 
   type Order{
     id: ID!
     total: Int
+    state: OrderState
   }
 
   type OrderItem{
